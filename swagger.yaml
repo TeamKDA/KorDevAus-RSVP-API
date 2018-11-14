@@ -1,0 +1,207 @@
+swagger: "2.0"
+info:
+  description: "This is the RSVP API definition."
+  version: "1.0.0"
+  title: "KDA - RSVP API"
+  termsOfService: "https://raw.githubusercontent.com/TeamKDA/KorDevAus-RSVP-API/master/LICENSE"
+  contact:
+    email: "ask@koreandevelopersaustralia.org"
+  license:
+    name: "MIT"
+    url: "https://raw.githubusercontent.com/TeamKDA/KorDevAus-RSVP-API/master/LICENSE"
+externalDocs:
+  description: "Find out more about RSVP API"
+  url: "https://github.com/TeamKDA/KorDevAus/wiki"
+schemes:
+- "https"
+host: "localhost:7071"
+basePath: "/api"
+tags:
+- name: "rsvps"
+  description: "Access to the list of RSVPs"
+  externalDocs:
+    description: "Find out more"
+    url: "https://github.com/TeamKDA/KorDevAus/wiki"
+- name: "rsvp"
+  description: "Access to the RSVP"
+  externalDocs:
+    description: "Find out more"
+    url: "https://github.com/TeamKDA/KorDevAus/wiki"
+paths:
+  /events/{eventId}/rsvps:
+    get:
+      tags:
+      - "rsvps"
+      summary: "Gets the list of RSVPs"
+      description: "This returns the list of RSVPs grouped by GOING, NOT SURE, NOT GOING"
+      operationId: "GetRsvps"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "eventId"
+        in: "path"
+        description: "Event ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/RsvpResponse"
+        404:
+          description: "Page not found"
+          schema:
+            $ref: "#/definitions/NotFoundResponse"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerErrorResponse"
+      security:
+      - authkey: []
+    post:
+      tags:
+      - "rsvp"
+      summary: "Creates the RSVP"
+      description: "This creates the RSVP"
+      operationId: "PostRsvp"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "eventId"
+        description: "Event ID"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "RSVP details"
+        required: true
+        schema:
+          $ref: "#/definitions/RsvpRequest"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/RsvpResponse"
+        400:
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/BadRequestResponse"
+        404:
+          description: "Page not found"
+          schema:
+            $ref: "#/definitions/NotFoundResponse"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerErrorResponse"
+      security:
+      - authkey: []
+    put:
+      tags:
+      - "rsvp"
+      summary: "Creates the RSVP"
+      description: "This creates the RSVP"
+      operationId: "PutRsvp"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "eventId"
+        description: "Event ID"
+        required: true
+      - in: "body"
+        name: "body"
+        description: "RSVP details"
+        required: true
+        schema:
+          $ref: "#/definitions/RsvpRequest"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/RsvpResponse"
+        400:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/BadRequestResponse"
+        404:
+          description: "Page not found"
+          schema:
+            $ref: "#/definitions/NotFoundResponse"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerErrorResponse"
+      security:
+      - authkey: []
+securityDefinitions:
+  authkey:
+    type: "apiKey"
+    name: "x-functions-key"
+    in: "header"
+definitions:
+  RsvpRequest:
+    type: "object"
+    properties:
+      meetupId:
+        type: "string"
+      memberId:
+        type: "string"
+      rsvp:
+        type: "string"
+        enum:
+        - "going"
+        - "notSure"
+        - "notGoing"
+    required:
+    - "meetupId"
+    - "memberId"
+    - "rsvp"
+  RsvpResponse:
+    type: "object"
+    properties:
+      rsvpId:
+        type: "string"
+      meetupId:
+        type: "string"
+      eventId:
+        type: "string"
+      memberId:
+        type: "string"
+      rsvp:
+        type: "string"
+        enum:
+        - "going"
+        - "notSure"
+        - "notGoing"
+    required:
+    - "rsvpId"
+    - "meetupId"
+    - "eventId"
+    - "memberId"
+    - "rsvp"
+  NotFoundResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+      details:
+        type: "string"
+  BadRequestResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+      details:
+        type: "string"
+  InternalServerErrorResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+      details:
+        type: "string"
